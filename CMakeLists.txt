@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 #Project name
-set(TARGET_NAME Temp)
+set(TARGET_NAME password_manager)
 
 #You can change this to Qt5 if you
 #are not ready to migrate to Qt6.

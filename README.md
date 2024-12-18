@@ -41,5 +41,23 @@ Since `control.cpp` is the "brain" of the system, it’s a good place for core w
 - Encrypting/decrypting using `encryption.cpp`.
 This keeps the other modules "dumb" and hopefully should avoid tight coupling. Other modules can then be easily modified when needed. The `credential.cpp` file will be a simple object for storing credential data in a simple class. It is important to avoid bloating this file keep it purely data focused. The other files will do operations on the `credential.cpp` file. The functions this file can have will be to modify itself. The `encryption.cpp`file handles all security concerns like hashing master passwords, encrypting and decrypting credentials and salt and pepper logic. This is where the modular nature of this architecture comes in handy: It would be very easy to swap algorithms later if needed.  Its important to ensure`writer.cpp` solely handles file I/O when called by `control.cpp`. `writer.cpp` writes encrypted data to disk and reads it back securely. Keeps `control.cpp` clean by abstracting file operations.
 
-Why am I doing it this way? Well I reckon this design is simple and modular, maintainable and scalable. Each file has a clear responsibility. You can debug and modify each module independently. The centralized control makes it easy for me (and hopefully others) to understand what's going on: `control.cpp` becomes the "director," delegating tasks to other modules. If I add more features (e.g., password strength checks), you can extend `control.cpp` or create more small modules that add onto the central file depending on how much I would need to add for each feature. 
+Why am I doing it this way? The main reason is that this project  is to help me **LEARN**. By dividing the program up into modular sections like this it means I can tackle each module one by one.  Focusing and learning one concept at a time. I reckon this design is simple and modular, maintainable and scalable. Each file has a clear responsibility. You can debug and modify each module independently. The centralized control makes it easy for me (and hopefully others) to understand what's going on: `control.cpp` becomes the "mediator", delegating tasks to other modules. Its like an in between between the front and back end. If I add more features (e.g., password strength checks), I can extend `control.cpp` or create more small modules that add onto the central file depending on how much I would need to add for each feature. 
 
+
+
+## UI GOALS
+
+#### Unlock the Password Manager:
+Enter a master password and unlock access.
+
+#### View Stored Credentials:
+Display a list of saved credentials.
+
+#### Add/Edit/Delete Credentials:
+Provide forms or buttons for creating, modifying, or removing entries.
+
+#### Search for Credentials:
+Allow users to search for specific credentials.
+
+#### Log Out or Exit:
+Provide an option to lock or exit the application securely.

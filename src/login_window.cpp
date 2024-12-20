@@ -1,22 +1,47 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <QLineEdit>
 #include <QLabel>
 #include <QFont>
 #include <QApplication>
+#include <QString>
 
 #include "login_window.hpp"
+#include "successor_window.hpp"
+
+/*
+ * Login Screen
+ *  
+*/
+
 
 QWidget *window;
-QPushButton *exit_button;
+QWidget *successor_window;
 
-loginWindow::loginWindow(QWidget *parent) : window(parent) {  
-    exit_button = new QPushButton(QApplication::translate("exit_button", "Exit"), window); 
-    // constructor here;
+QPushButton *exit_button;
+QPushButton *login_button;
+QLineEdit *line_edit;
+
+loginWindow::loginWindow(QWidget *parent, QWidget *successor) : window(parent), successor_window(successor) {  
+    exit_button = new QPushButton(QApplication::translate("exit_button", "Exit"), window);  
+    login_button = new QPushButton(QApplication::translate("login_button", "Log In"), window);
+    line_edit = new QLineEdit();
 }
 
 void loginWindow::onExitClicked() {
     QCoreApplication::quit();
+}
+
+void loginWindow::onLoginClicked() {
+    QString correct_entry = QString::fromStdString("passkey");
+    QString input_entry = line_edit->text();
+    if(correct_entry == input_entry) { 
+        successorWindow successor_window_qobj(successor_window);   
+        successor_window_qobj.drawWindow();
+        successor_window->show(); 
+        window->close();
+    } else {
+        line_edit->setEchoMode(QLineEdit::Password);
+    }
 }
 
 QWidget* loginWindow::getParent() {
@@ -27,6 +52,14 @@ QPushButton* loginWindow::getExitButton() {
     return exit_button;
 }
 
+QPushButton* loginWindow::getLoginButton() {
+    return login_button;
+}
+
+QLineEdit* loginWindow::getLineEdit() {
+    return line_edit;
+}
+
 void loginWindow::drawWindow() {
     window->resize(500, 500);
     window->setMinimumSize(500,500);
@@ -34,13 +67,10 @@ void loginWindow::drawWindow() {
     
     //master key entry 
     QLabel *label = new QLabel(QApplication::translate("master_entry", "Master Key: "));
-    QLineEdit *line_edit = new QLineEdit();
     line_edit->setEchoMode(QLineEdit::Password);
    
     //login and exit buttons
-    QPushButton *button = new QPushButton(QApplication::translate("login_button", "Log In"), window);
-    //QPushButton *exit_button = new QPushButton(QApplication::translate("exit_button", "Exit"), window); 
-    button->setFixedSize(100, 50);
+    login_button->setFixedSize(100, 50);
     exit_button->setFixedSize(100, 25);
      
     //layout box for master key entry and its corresponding label 
@@ -52,7 +82,7 @@ void loginWindow::drawWindow() {
 
     //vertical and horizonal layout boxes for login button and exit button
     QVBoxLayout *button_layout = new QVBoxLayout();
-    button_layout->addWidget(button, 2);
+    button_layout->addWidget(login_button, 2);
     button_layout->addWidget(exit_button, 1);
     
     QHBoxLayout *button_outer_layout = new QHBoxLayout();

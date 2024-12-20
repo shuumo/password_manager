@@ -28,6 +28,8 @@ endif()
 find_package(Qt${QT_MAJOR_VERSION} COMPONENTS Widgets REQUIRED PATHS $ENV{Qt${QT_MAJOR_VERSION}_HOME})
 
 add_executable(${TARGET_NAME}
+    include/successor_window.hpp
+    src/successor_window.cpp
     include/login_window.hpp
     src/login_window.cpp
     src/main.cpp)

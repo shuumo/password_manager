@@ -26,13 +26,13 @@ Can use a one-way hash to check if the login credential is correct. If the given
 We can use basic symmetric cryptography, or more advanced asymmetric cryptography. Start with symmetric and move from there. Encrypt the password string then store it in the database. If the credential unlocking hash is correct we can fetch and decrypt the stored passwords.
 
 #### General Structure
-`main.cpp` is the entry point of the program. It will create the initial objects required for QT6 to draw windows.
-`login_window.cpp` will be an object that is responsible for the login screen and its related sockets.
-`successor_window.cpp` will be an object that is responsible for the main post-login home screen and its related sockets. 
-`csvreading.cpp` will be responsible for file io.
-`hashing.cpp` will be responsible for hash related functions and checking in regards to the master key.
-`encryption.cpp` will be responsible for the encryption and decryption of credential data.
-
+- `main.cpp` is the entry point of the program. It will create the initial objects required for QT6 to draw windows.
+- `login_window.cpp` will be an object that is responsible for the login screen and its related sockets.
+- `successor_window.cpp` will be an object that is responsible for the main post-login home screen and its related sockets. 
+- `csvreading.cpp` will be responsible for file io.
+- `hashing.cpp` will be responsible for hash related functions and checking in regards to the master key.
+- `encryption.cpp` will be responsible for the encryption and decryption of credential data.
+- `credential.cpp` will be objects that contain the credentials data in their encrypted form.
 
 ## UI GOALS
 

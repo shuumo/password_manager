@@ -15,6 +15,7 @@ Requirements of the program
 - GUI: Qt6
 - Data storage: CSV format file
 - Build tool: cmake
+
 To compile, simply run `cmake CMakeLists.txt` and then `make`. 
 
 ## Concepts to use

@@ -5,7 +5,7 @@ set(TARGET_NAME password_manager)
 
 #You can change this to Qt5 if you
 #are not ready to migrate to Qt6.
-set(QT_MAJOR_VERSION 5)
+set(QT_MAJOR_VERSION 6)
 
 project(${TARGET_NAME} VERSION 0.0.1 DESCRIPTION "Project Description")
 
@@ -28,6 +28,10 @@ endif()
 find_package(Qt${QT_MAJOR_VERSION} COMPONENTS Widgets REQUIRED PATHS $ENV{Qt${QT_MAJOR_VERSION}_HOME})
 
 add_executable(${TARGET_NAME}
+    include/credential.hpp
+    src/credential.cpp
+    include/csvreading.hpp
+    src/csvreading.cpp
     include/successor_window.hpp
     src/successor_window.cpp
     include/login_window.hpp

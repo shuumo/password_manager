@@ -6,8 +6,13 @@
 #include <QListWidget>
 #include <QSpacerItem>
 #include <QSizePolicy>
+#include <QListWidgetItem>
+#include <vector>
 
 #include "successor_window.hpp"
+#include "credential.hpp"
+#include "csvreading.hpp"
+
 /*
  * Main screen (home menu, post login)
 */
@@ -20,7 +25,7 @@ QPushButton *edit_button;
 successorWindow::successorWindow(QWidget *parent) : main_window(parent) {
     add_button = new QPushButton(QApplication::translate("add_credential", "Add Credential")); 
     edit_button = new QPushButton(QApplication::translate("edit_credential", "Edit Credential"));  
-    logout_button = new QPushButton(QApplication::translate("exit", "Exit"));
+    logout_button = new QPushButton(QApplication::translate("exit", "Log Out"));
 }
 
 void successorWindow::onLogoutClicked() {
@@ -50,11 +55,13 @@ void successorWindow::drawWindow() {
    
     // grid for info box
     QGridLayout *info_box_grid = new QGridLayout();
-   
+    
+    //QLabel *cred_name_id = new QLabel(QApplication::translate("cred_name_id", "id: "));
     QLabel *cred_name_title = new QLabel(QApplication::translate("cred_name_title", "name: "));
     QLabel *cred_name_user = new QLabel(QApplication::translate("cred_name_user", " user: "));
     QLabel *cred_name_pass = new QLabel(QApplication::translate("cred_name_pass", " pass: "));
-    
+   
+    //QLabel *cred_id = new QLabel(QApplication::translate("cred_id", " "));
     QLabel *cred_title = new QLabel(QApplication::translate("cred_title", " "));
     QLabel *cred_user = new QLabel(QApplication::translate("cred_user", " "));
     QLabel *cred_pass = new QLabel(QApplication::translate("cred_pass", " "));
@@ -65,6 +72,8 @@ void successorWindow::drawWindow() {
     info_box_grid->addWidget(cred_user, 1, 1);
     info_box_grid->addWidget(cred_name_pass, 2, 0); 
     info_box_grid->addWidget(cred_pass, 2, 1);
+    //info_box_grid->addWidget(cred_name_id, 3, 0);
+    //info_box_grid->addWidget(cred_id, 3, 1);
 
     // wrapper for infobox
     QWidget *info_grid_wrapper = new QWidget();
@@ -75,29 +84,35 @@ void successorWindow::drawWindow() {
     add_button->setFixedSize(150, 25); 
     logout_button->setFixedSize(150, 25); 
     edit_button->setFixedSize(150, 25); 
+    QSpacerItem *options_spacer = new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    options_vbox->addItem(options_spacer); 
     options_vbox->addWidget(add_button);
     options_vbox->addWidget(edit_button);
     options_vbox->addWidget(logout_button); 
     options_vbox->setAlignment(add_button, Qt::AlignHCenter);
     options_vbox->setAlignment(logout_button, Qt::AlignHCenter);
     options_vbox->setAlignment(edit_button, Qt::AlignHCenter);
-    QSpacerItem *options_spacer = new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    options_vbox->addItem(options_spacer); 
+
 
     // wrapper for options Vbox
     QWidget *option_box_wrapper = new QWidget(); 
     option_box_wrapper->setLayout(options_vbox); 
 
     // right side credential list
-    QListWidget *credential_list = new QListWidget();
-
+    QListWidget *credential_list_widget = new QListWidget();
+    std::vector<credential> credentialList = readio::createCredentialVector();
+    for(auto& i : credentialList) {
+       QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(i.getCredentialName())); 
+       item->setData(Qt::UserRole, i.getCredentialIdentifier());
+       credential_list_widget->addItem(item);
+    }
 
 
     // add widgets to bottom grid 
     QGridLayout *grid_layout = new QGridLayout();
     grid_layout->addWidget(info_grid_wrapper, 0, 0, 2, 1);
     grid_layout->addWidget(option_box_wrapper, 2, 0);
-    grid_layout->addWidget(credential_list, 0, 1, 3, 1);
+    grid_layout->addWidget(credential_list_widget, 0, 1, 3, 1);
     
     // wrap bottom grid as a widget and add to outer most vertical box
     QWidget *grid_wrapper = new QWidget();

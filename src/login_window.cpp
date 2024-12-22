@@ -6,11 +6,10 @@
 #include <QString>
 
 #include "login_window.hpp"
-#include "successor_window.hpp"
 
 /*
  * Login Screen
- *  
+ *
 */
 
 
@@ -21,10 +20,14 @@ QPushButton *exit_button;
 QPushButton *login_button;
 QLineEdit *line_edit;
 
+successorWindow *successorWindowObj;
+
 loginWindow::loginWindow(QWidget *parent, QWidget *successor) : window(parent), successor_window(successor) {  
     exit_button = new QPushButton(QApplication::translate("exit_button", "Exit"), window);  
     login_button = new QPushButton(QApplication::translate("login_button", "Log In"), window);
     line_edit = new QLineEdit();
+    successorWindowObj = new successorWindow(successor_window);
+
 }
 
 void loginWindow::onExitClicked() {
@@ -34,14 +37,15 @@ void loginWindow::onExitClicked() {
 void loginWindow::onLoginClicked() {
     QString correct_entry = QString::fromStdString("passkey");
     QString input_entry = line_edit->text();
-    if(correct_entry == input_entry) { 
-        successorWindow successor_window_qobj(successor_window);   
-        successor_window_qobj.drawWindow();
+    if(correct_entry == input_entry) {   
+        successorWindowObj->drawWindow();
         successor_window->show(); 
         window->close();
-    } else {
-        line_edit->setEchoMode(QLineEdit::Password);
-    }
+    } 
+}
+
+successorWindow* loginWindow::getSuccessorWindowObj() {
+    return successorWindowObj;
 }
 
 QWidget* loginWindow::getParent() {
@@ -61,8 +65,8 @@ QLineEdit* loginWindow::getLineEdit() {
 }
 
 void loginWindow::drawWindow() {
-    window->resize(500, 500);
-    window->setMinimumSize(500,500);
+    window->resize(600, 500);
+    window->setMinimumSize(600,500);
     window->setWindowTitle(QApplication::translate("password_manager", "Password Manager"));
     
     //master key entry 
@@ -108,10 +112,5 @@ void loginWindow::drawWindow() {
 
     window->setLayout(vertical_layout); 
 }
-
-
-
-
-
 
 

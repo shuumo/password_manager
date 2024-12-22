@@ -10,10 +10,12 @@ Requirements of the program
 8. View all stored credentials
 9. Lock the credentials behind one password
 
-## Technology Stack
-Programming Language: C++
-GUI: Qt
-Database: CSV file, or any non-relational way of storing data
+## Technology Stack, Dependencies and Compilation
+- Programming Language: C++17 with g++ v14.2.1 compiler
+- GUI: Qt6
+- Data storage: CSV format file
+- Build tool: cmake
+To compile, simply run `cmake CMakeLists.txt` and then `make`. 
 
 ## Concepts to use
 #### Drawing the GUI

@@ -18,14 +18,18 @@ int main(int argc, char **argv) {
     login_window_qobj.drawWindow(); 
 
     login_parent_widget.show();
-     
-    // Slots for LoginWindow
+
+
+    // Exit Signal (Login)
     QObject::connect(login_window_qobj.getExitButton(), &QPushButton::clicked, &login_window_qobj, &loginWindow::onExitClicked);
+    // Login Signal (Login) 
     QObject::connect(login_window_qobj.getLoginButton(), &QPushButton::clicked, &login_window_qobj, &loginWindow::onLoginClicked);
 
-    // Slots for successorWindow
+
+    // Logout Signal (Successor) 
     QObject::connect(login_window_qobj.getSuccessorWindowObj()->getLogoutButton(),
             &QPushButton::clicked, login_window_qobj.getSuccessorWindowObj(), &successorWindow::onLogoutClicked); 
+    // List View Select Signal (Successor)
     QObject::connect(login_window_qobj.getSuccessorWindowObj()->getListWidget(),
             &QListWidget::itemClicked, login_window_qobj.getSuccessorWindowObj(), &successorWindow::onListItemSelected);    
 

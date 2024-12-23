@@ -10,9 +10,10 @@ std::vector<credential> readio::createCredentialVector() {
     if(!fileReader.is_open()) {
         std::ofstream fileWriter("vault_data"); 
         fileWriter.close();
+        return listVector;
     }
     
-    int id = 0;
+    int id = -1;
     std::string n, u, p;
 
     while(std::getline(fileReader, n, ',')
@@ -29,21 +30,42 @@ std::vector<credential> readio::createCredentialVector() {
 
 void readio::addCredToFile(credential cred) {
     std::string toAppend = cred.getCredentialName()
-        += ',' += cred.getCredentialUser()
-        += ',' += cred.getCredentialPass();
+        += std::string(",") += cred.getCredentialUser()
+        += std::string(",") += cred.getCredentialPass();
 
     std::ofstream fileWriter("vault_data", std::ios::app);
-    fileWriter << toAppend;
+    fileWriter << toAppend << '\n';
+    fileWriter.close();
     return;
 }
 
-void readio::removeCredFromFile(credential cred) {
-    cred.setName("hello world");
+void readio::removeCredFromFile(credential cred, std::vector<credential> rebuildTemplate) {
+    // delete credential from parameter vector then rebuild
+    // the file using the vector
+    int targetIdx = cred.getCredentialIdentifier();
+    rebuildTemplate.erase(std::next(rebuildTemplate.begin(), targetIdx));
+    readio::rebuildDataVault(rebuildTemplate); 
     return;
 }
 
-void readio::editCredInFile(credential cred) {
-    // remove credential.. then append new credential
-    cred.setName("hello world");
+void readio::editCredInFile(credential cred, std::vector<credential> rebuildTemplate) {
+    // modify the credential in parameter vector then rebuild
+    // the file using the vector
+    int targetIdx = cred.getCredentialIdentifier();
+    rebuildTemplate[targetIdx].setName(cred.getCredentialName());
+    rebuildTemplate[targetIdx].setUser(cred.getCredentialUser());
+    rebuildTemplate[targetIdx].setPass(cred.getCredentialPass());
+    readio::rebuildDataVault(rebuildTemplate); 
+    return;
+}
+
+void readio::rebuildDataVault(std::vector<credential> rebuildTemplate) {
+    std::fstream fileWriter;
+    fileWriter.open("vault_data", std::ofstream::out|std::ofstream::trunc);
+    fileWriter.flush();
+    fileWriter.close();
+    for(auto& cred : rebuildTemplate) {
+        readio::addCredToFile(cred);
+    } 
     return;
 }

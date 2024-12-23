@@ -54,3 +54,6 @@ Allow users to search for specific credentials.
 
 #### Log Out or Exit:
 Provide an option to lock or exit the application securely.
+
+
+warning: probably not up to the highest of industry standard for cyber security, use 1password or somthing instead ;)

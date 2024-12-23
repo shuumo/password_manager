@@ -1,15 +1,3 @@
-## Getting Started
-
-Requirements of the program
-1. Has a graphical user interface
-3. Add credentials  to database
-4. Encrypt the credentials 
-5. Modify the credentials
-6. Remove the credentials
-7. Store multiple credentials in the database
-8. View all stored credentials
-9. Lock the credentials behind one password
-
 ## Technology Stack, Dependencies and Compilation
 - Programming Language: C++17 with g++ v14.2.1 compiler
 - GUI: Qt6
@@ -17,6 +5,19 @@ Requirements of the program
 - Build tool: cmake
 
 To compile, simply run `cmake CMakeLists.txt` and then `make`. 
+
+
+## MVP Requirements
+1. Has a graphical user interface
+3. Add credentials  to database
+4. Encrypt the credentials using symmetric encryption
+5. Decrypt the credentials using symmetric encryption
+6. Modify the credentials
+7. Remove the credentials
+8. Store multiple credentials in the database
+9. View all stored credentials
+10. Lock the credentials behind one password using a HASH algorithm
+
 
 ## Concepts to use
 #### Drawing the GUI

@@ -1,7 +1,7 @@
 ## Technology Stack, Dependencies and Compilation
 - Programming Language: C++17 with g++ v14.2.1 compiler
 - GUI: Qt6
-- Data storage: CSV format file
+- Data storage: CSV format file vault_date (stores encrypted values, comma seperated)
 - Build tool: cmake
 
 To compile, simply run `cmake CMakeLists.txt` and then `make`. 

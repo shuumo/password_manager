@@ -34,6 +34,12 @@ int main(int argc, char **argv) {
     // Remove Credential Signal (Successor)
     QObject::connect(login_window_qobj.getSuccessorWindowObj()->getRemoveButton(),
             &QPushButton::clicked, login_window_qobj.getSuccessorWindowObj(), &successorWindow::onRemoveClicked);
+    // Add Credential Signal (Successor)
+    QObject::connect(login_window_qobj.getSuccessorWindowObj()->getAddButton(),
+            &QPushButton::clicked, login_window_qobj.getSuccessorWindowObj(), &successorWindow::onAddClicked);
+    // Edit Credential Signal (Successor)
+    QObject::connect(login_window_qobj.getSuccessorWindowObj()->getEditButton(),
+            &QPushButton::clicked, login_window_qobj.getSuccessorWindowObj(), &successorWindow::onEditClicked);
 
     return app.exec();
 }

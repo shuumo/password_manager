@@ -5,6 +5,8 @@
 #include <QSizePolicy>
 #include <QListWidgetItem>
 #include <QMessageBox>
+#include <QLineEdit>
+#include <QDialog>
 #include <vector>
 
 #include "successor_window.hpp"
@@ -47,16 +49,77 @@ void successorWindow::onLogoutClicked() {
 }
 
 void successorWindow::onAddClicked() {
-    // Create a "dialogue box"
-    // Dialogue box contains 3 entries: credential name, credential user, credential password
-    // on confirm buttoon: get all 3 values and create a new Credential object
-    // pass it to readio::addCredToFile();
-    // close Dialogue Box 
+    QDialog addCredPopUp(main_window);
+    
+    QLabel name_label(QApplication::translate("name_label_add", "Enter Credential Name"));
+    QLineEdit name_entry;
+    QLabel user_label(QApplication::translate("user_label_add", "Enter Credential Username"));
+    QLineEdit user_entry;
+    QLabel pass_label(QApplication::translate("pass_label_add", "Enter Credential Password"));
+    QLineEdit pass_entry;
+    pass_entry.setEchoMode(QLineEdit::Password);
+    
+    QVBoxLayout internal_add_vbox; 
+    internal_add_vbox.addWidget(&name_label); 
+    internal_add_vbox.addWidget(&name_entry); 
+    internal_add_vbox.addWidget(&user_label); 
+    internal_add_vbox.addWidget(&user_entry); 
+    internal_add_vbox.addWidget(&pass_label); 
+    internal_add_vbox.addWidget(&pass_entry); 
+
+    QPushButton confirm_add_button(QApplication::translate("confirm_add_button", "Add")); 
+    QPushButton cancel_add_button(QApplication::translate("cancel_add_button", "Cancel")); 
+    
+    QHBoxLayout internal_add_hbox;
+    internal_add_hbox.addWidget(&confirm_add_button);
+    internal_add_hbox.addWidget(&cancel_add_button);
+    
+    internal_add_vbox.addLayout(&internal_add_hbox);
+
+    addCredPopUp.setLayout(&internal_add_vbox);
+    addCredPopUp.exec();
 }
 
-void successorWindow::onEditClicked() {
-    // Qinputdialog?
-    // open an edit credential window
+void successorWindow::onEditClicked() { 
+    int targetIdx = credential_list_widget->currentRow();
+    if(targetIdx == -1) {
+        QMessageBox editCredPopUp(main_window);
+        editCredPopUp.setText("You have not selected any credential to perform this operation on.");
+        editCredPopUp.setStandardButtons(QMessageBox::Ok);
+        editCredPopUp.setDefaultButton(QMessageBox::Ok);
+        editCredPopUp.exec();
+        return;
+    }
+    
+    QDialog editCredPopUp(main_window);
+    
+    QLabel name_label(QApplication::translate("name_label_edit", "Enter New Credential Name"));
+    QLineEdit name_entry;
+    QLabel user_label(QApplication::translate("user_label_edit", "Enter New Credential Username"));
+    QLineEdit user_entry;
+    QLabel pass_label(QApplication::translate("pass_label_edit", "Enter New Credential Password"));
+    QLineEdit pass_entry;
+    pass_entry.setEchoMode(QLineEdit::Password);
+    
+    QVBoxLayout internal_edit_vbox; 
+    internal_edit_vbox.addWidget(&name_label); 
+    internal_edit_vbox.addWidget(&name_entry); 
+    internal_edit_vbox.addWidget(&user_label); 
+    internal_edit_vbox.addWidget(&user_entry); 
+    internal_edit_vbox.addWidget(&pass_label); 
+    internal_edit_vbox.addWidget(&pass_entry); 
+
+    QPushButton confirm_edit_button(QApplication::translate("confirm_edit_button", "Confirm")); 
+    QPushButton cancel_edit_button(QApplication::translate("cancel_edit_button", "Cancel")); 
+    
+    QHBoxLayout internal_edit_hbox;
+    internal_edit_hbox.addWidget(&confirm_edit_button);
+    internal_edit_hbox.addWidget(&cancel_edit_button);
+    
+    internal_edit_vbox.addLayout(&internal_edit_hbox);
+
+    editCredPopUp.setLayout(&internal_edit_vbox);
+    editCredPopUp.exec();
 }
 
 void successorWindow::onRemoveClicked() {
@@ -92,6 +155,14 @@ QListWidget* successorWindow::getListWidget() {
 
 QPushButton* successorWindow::getLogoutButton() {
     return logout_button;
+}
+
+QPushButton* successorWindow::getAddButton() {
+    return add_button;
+}
+
+QPushButton* successorWindow::getEditButton() {
+    return edit_button;
 }
 
 QPushButton* successorWindow::getRemoveButton() {

@@ -35,6 +35,8 @@ public:
     QListWidget* getListWidget();
     QPushButton* getLogoutButton();
     QPushButton* getRemoveButton();
+    QPushButton* getAddButton();
+    QPushButton* getEditButton();
 
 public slots:
     void onEditClicked();

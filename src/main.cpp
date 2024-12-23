@@ -3,7 +3,6 @@
 #include <QApplication>
 
 #include "login_window.hpp"
-#include "successor_window.hpp"
 
 /*
  * Main
@@ -31,8 +30,10 @@ int main(int argc, char **argv) {
             &QPushButton::clicked, login_window_qobj.getSuccessorWindowObj(), &successorWindow::onLogoutClicked); 
     // List View Select Signal (Successor)
     QObject::connect(login_window_qobj.getSuccessorWindowObj()->getListWidget(),
-            &QListWidget::itemClicked, login_window_qobj.getSuccessorWindowObj(), &successorWindow::onListItemSelected);    
-
+            &QListWidget::itemClicked, login_window_qobj.getSuccessorWindowObj(), &successorWindow::onListItemSelected);     
+    // Remove Credential Signal (Successor)
+    QObject::connect(login_window_qobj.getSuccessorWindowObj()->getRemoveButton(),
+            &QPushButton::clicked, login_window_qobj.getSuccessorWindowObj(), &successorWindow::onRemoveClicked);
 
     return app.exec();
 }

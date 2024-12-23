@@ -3,14 +3,13 @@
 
 #include "csvreading.hpp"
 
-std::vector<credential> readio::createCredentialVector() { 
-    std::vector<credential> listVector;
-    std::ifstream fileReader("vault_data");
-    
+void readio::createCredentialVector(std::vector<credential> *listVector) { 
+    std::ifstream fileReader("vault_data"); 
+    listVector->clear();
     if(!fileReader.is_open()) {
         std::ofstream fileWriter("vault_data"); 
         fileWriter.close();
-        return listVector;
+        return;
     }
     
     int id = -1;
@@ -21,11 +20,11 @@ std::vector<credential> readio::createCredentialVector() {
             && std::getline(fileReader, p, '\n')) {
         id++;
         credential cred(id, n, u, p);
-        listVector.push_back(cred);
+        listVector->push_back(cred);
     }
     
     fileReader.close();
-    return listVector;
+    return;
 }
 
 void readio::addCredToFile(credential cred) {
@@ -40,8 +39,6 @@ void readio::addCredToFile(credential cred) {
 }
 
 void readio::removeCredFromFile(credential cred, std::vector<credential> rebuildTemplate) {
-    // delete credential from parameter vector then rebuild
-    // the file using the vector
     int targetIdx = cred.getCredentialIdentifier();
     rebuildTemplate.erase(std::next(rebuildTemplate.begin(), targetIdx));
     readio::rebuildDataVault(rebuildTemplate); 
@@ -49,8 +46,6 @@ void readio::removeCredFromFile(credential cred, std::vector<credential> rebuild
 }
 
 void readio::editCredInFile(credential cred, std::vector<credential> rebuildTemplate) {
-    // modify the credential in parameter vector then rebuild
-    // the file using the vector
     int targetIdx = cred.getCredentialIdentifier();
     rebuildTemplate[targetIdx].setName(cred.getCredentialName());
     rebuildTemplate[targetIdx].setUser(cred.getCredentialUser());

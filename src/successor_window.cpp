@@ -4,6 +4,7 @@
 #include <QSpacerItem>
 #include <QSizePolicy>
 #include <QListWidgetItem>
+#include <QMessageBox>
 #include <vector>
 
 #include "successor_window.hpp"
@@ -38,11 +39,44 @@ successorWindow::successorWindow(QWidget *parent) : main_window(parent) {
     cred_user = new QLabel(QApplication::translate("cred_user", " "));
     cred_pass = new QLabel(QApplication::translate("cred_pass", " "));
 
-    credentialList = readio::createCredentialVector();
+    readio::createCredentialVector(&credentialList);
 }
 
 void successorWindow::onLogoutClicked() {
     QCoreApplication::quit();
+}
+
+void successorWindow::onAddClicked() {
+    // Create a "dialogue box"
+    // Dialogue box contains 3 entries: credential name, credential user, credential password
+    // on confirm buttoon: get all 3 values and create a new Credential object
+    // pass it to readio::addCredToFile();
+    // close Dialogue Box 
+}
+
+void successorWindow::onEditClicked() {
+    // Qinputdialog?
+    // open an edit credential window
+}
+
+void successorWindow::onRemoveClicked() {
+    QMessageBox removeCredPopUp(main_window);
+    int targetIdx = credential_list_widget->currentRow();
+    if(targetIdx == -1) {
+        removeCredPopUp.setText("You have not selected any credential to perform this operation on.");
+        removeCredPopUp.setStandardButtons(QMessageBox::Ok);
+        removeCredPopUp.setDefaultButton(QMessageBox::Ok);
+        removeCredPopUp.exec();
+        return;
+    }
+    removeCredPopUp.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+    removeCredPopUp.setDefaultButton(QMessageBox::Cancel);
+    removeCredPopUp.setText("Are you sure you want to permanently erase the credential from the Vault?");
+    int selection = removeCredPopUp.exec();
+    if(selection == QMessageBox::Yes) {
+        readio::removeCredFromFile(credentialList[targetIdx], credentialList);
+        successorWindow::buildList();
+    }
 }
 
 void successorWindow::onListItemSelected() {
@@ -58,6 +92,10 @@ QListWidget* successorWindow::getListWidget() {
 
 QPushButton* successorWindow::getLogoutButton() {
     return logout_button;
+}
+
+QPushButton* successorWindow::getRemoveButton() {
+    return remove_button;
 }
 
 void successorWindow::drawWindow() {
@@ -85,10 +123,13 @@ void successorWindow::drawWindow() {
     QLabel *cred_name_user = new QLabel(QApplication::translate("cred_name_user", " user: "));
     QLabel *cred_name_pass = new QLabel(QApplication::translate("cred_name_pass", " pass: "));
     
-    QFont *data_font = new QFont("Ariel", 12);
+    QFont *data_font = new QFont("Ariel", 14);
     cred_title->setFont(*data_font);
     cred_user->setFont(*data_font);
     cred_pass->setFont(*data_font);
+    cred_title->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    cred_user->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    cred_pass->setTextInteractionFlags(Qt::TextSelectableByMouse);
     cred_title->setAlignment(Qt::AlignRight);
     cred_user->setAlignment(Qt::AlignRight);
     cred_pass->setAlignment(Qt::AlignRight);
@@ -112,10 +153,10 @@ void successorWindow::drawWindow() {
 
     // options box Vbox
     QVBoxLayout *options_vbox = new QVBoxLayout();
-    add_button->setMinimumSize(150, 25); 
-    logout_button->setMinimumSize(150, 25); 
-    edit_button->setMinimumSize(150, 25);
-    remove_button->setFixedSize(150, 25);
+    add_button->setMinimumSize(225, 25); 
+    logout_button->setMinimumSize(225, 25); 
+    edit_button->setMinimumSize(225, 25);
+    remove_button->setFixedSize(225, 25);
     QSpacerItem *options_spacer = new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
     options_vbox->addItem(options_spacer); 
     options_vbox->addWidget(add_button);
@@ -132,11 +173,7 @@ void successorWindow::drawWindow() {
     QWidget *option_box_wrapper = new QWidget(); 
     option_box_wrapper->setLayout(options_vbox); 
 
-    // right side credential list
-    for(auto& i : credentialList) { 
-        credential_list_widget->addItem(QString::fromStdString(i.getCredentialName()));
-    }
-
+    successorWindow::buildList();
 
     // add widgets to bottom grid 
     QGridLayout *grid_layout = new QGridLayout();
@@ -150,4 +187,12 @@ void successorWindow::drawWindow() {
     outer_most_vbox->addWidget(grid_wrapper, 6);
     
     main_window->setLayout(outer_most_vbox);
+}
+
+void successorWindow::buildList() { 
+    readio::createCredentialVector(&credentialList);
+    credential_list_widget->clear();
+    for(auto& i : credentialList) { 
+        credential_list_widget->addItem(QString::fromStdString(i.getCredentialName()));
+    }
 }

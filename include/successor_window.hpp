@@ -30,13 +30,16 @@ private:
 public:
     successorWindow(QWidget *parent);
     void drawWindow();
+    void buildList();
     
     QListWidget* getListWidget();
     QPushButton* getLogoutButton();
+    QPushButton* getRemoveButton();
 
 public slots:
     void onEditClicked();
     void onAddClicked();
+    void onRemoveClicked();
     void onLogoutClicked();
     void onListItemSelected();
 };

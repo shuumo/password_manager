@@ -1,6 +1,7 @@
 ## Technology Stack, Dependencies and Compilation
 - Programming Language: C++17 with g++ v14.2.1 compiler
 - GUI: Qt6
+- Encryption Library: OpenSSL (subject to change)
 - Data storage: CSV format file vault_data (stores encrypted values, comma seperated)
 - Build tool: cmake
 

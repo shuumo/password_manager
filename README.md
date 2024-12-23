@@ -1,19 +1,24 @@
-## Getting Started
+## Technology Stack, Dependencies and Compilation
+- Programming Language: C++17 with g++ v14.2.1 compiler
+- GUI: Qt6
+- Encryption Library: OpenSSL (subject to change)
+- Data storage: CSV format file vault_data (stores encrypted values, comma seperated)
+- Build tool: cmake
 
-Requirements of the program
+To compile, simply run `cmake CMakeLists.txt` and then `make`. 
+
+
+## MVP Requirements
 1. Has a graphical user interface
 3. Add credentials  to database
-4. Encrypt the credentials 
-5. Modify the credentials
-6. Remove the credentials
-7. Store multiple credentials in the database
-8. View all stored credentials
-9. Lock the credentials behind one password
+4. Encrypt the credentials using symmetric encryption
+5. Decrypt the credentials using symmetric encryption
+6. Modify the credentials
+7. Remove the credentials
+8. Store multiple credentials in the database
+9. View all stored credentials
+10. Lock the credentials behind one password using a HASH algorithm
 
-## Technology Stack
-Programming Language: C++
-GUI: Qt
-Database: CSV file, or any non-relational way of storing data
 
 ## Concepts to use
 #### Drawing the GUI
@@ -26,13 +31,13 @@ Can use a one-way hash to check if the login credential is correct. If the given
 We can use basic symmetric cryptography, or more advanced asymmetric cryptography. Start with symmetric and move from there. Encrypt the password string then store it in the database. If the credential unlocking hash is correct we can fetch and decrypt the stored passwords.
 
 #### General Structure
-`main.cpp` is the entry point of the program. It will create the initial objects required for QT6 to draw windows.
-`login_window.cpp` will be an object that is responsible for the login screen and its related sockets.
-`successor_window.cpp` will be an object that is responsible for the main post-login home screen and its related sockets. 
-`csvreading.cpp` will be responsible for file io.
-`hashing.cpp` will be responsible for hash related functions and checking in regards to the master key.
-`encryption.cpp` will be responsible for the encryption and decryption of credential data.
-
+- `main.cpp` is the entry point of the program. It will create the initial objects required for QT6 to draw windows.
+- `login_window.cpp` will be an object that is responsible for the login screen and its related sockets.
+- `successor_window.cpp` will be an object that is responsible for the main post-login home screen and its related sockets. 
+- `csvreading.cpp` will be responsible for file io.
+- `hashing.cpp` will be responsible for hash related functions and checking in regards to the master key.
+- `encryption.cpp` will be responsible for the encryption and decryption of credential data.
+- `credential.cpp` will be objects that contain the credentials data in their encrypted form.
 
 ## UI GOALS
 
@@ -50,3 +55,6 @@ Allow users to search for specific credentials.
 
 #### Log Out or Exit:
 Provide an option to lock or exit the application securely.
+
+
+warning: probably not up to the highest of industry standard for cyber security, use 1password or somthing instead ;)

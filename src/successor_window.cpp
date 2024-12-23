@@ -1,9 +1,6 @@
 #include <QApplication>
 #include <QVBoxLayout>
 #include <QFont>
-#include <QLabel>
-#include <QPushButton>
-#include <QListWidget>
 #include <QSpacerItem>
 #include <QSizePolicy>
 #include <QListWidgetItem>
@@ -13,6 +10,7 @@
 #include "credential.hpp"
 #include "csvreading.hpp"
 
+#include <iostream>
 /*
  * Main screen (home menu, post login)
 */
@@ -21,15 +19,41 @@ QWidget *main_window;
 QPushButton *add_button;
 QPushButton *logout_button;
 QPushButton *edit_button;
+QPushButton *remove_button;
+QListWidget *credential_list_widget;
+QLabel *cred_title;
+QLabel *cred_user;
+QLabel *cred_pass;
+std::vector<credential> credentialList;
 
 successorWindow::successorWindow(QWidget *parent) : main_window(parent) {
     add_button = new QPushButton(QApplication::translate("add_credential", "Add Credential")); 
     edit_button = new QPushButton(QApplication::translate("edit_credential", "Edit Credential"));  
-    logout_button = new QPushButton(QApplication::translate("exit", "Log Out"));
+    remove_button = new QPushButton(QApplication::translate("remove_credential", "Destroy Credential"));
+    logout_button = new QPushButton(QApplication::translate("exit_program", "Log Out"));
+     
+    credential_list_widget = new QListWidget();
+    
+    cred_title = new QLabel(QApplication::translate("cred_title", " "));
+    cred_user = new QLabel(QApplication::translate("cred_user", " "));
+    cred_pass = new QLabel(QApplication::translate("cred_pass", " "));
+
+    credentialList = readio::createCredentialVector();
 }
 
 void successorWindow::onLogoutClicked() {
     QCoreApplication::quit();
+}
+
+void successorWindow::onListItemSelected() {
+    int selectedIdx = credential_list_widget->currentRow();
+    cred_title->setText(QString::fromStdString(credentialList[selectedIdx].getCredentialName()));
+    cred_user->setText(QString::fromStdString(credentialList[selectedIdx].getCredentialUser()));
+    cred_pass->setText(QString::fromStdString(credentialList[selectedIdx].getCredentialPass()));
+}
+
+QListWidget* successorWindow::getListWidget() {
+    return credential_list_widget;
 }
 
 QPushButton* successorWindow::getLogoutButton() {
@@ -60,11 +84,18 @@ void successorWindow::drawWindow() {
     QLabel *cred_name_title = new QLabel(QApplication::translate("cred_name_title", "name: "));
     QLabel *cred_name_user = new QLabel(QApplication::translate("cred_name_user", " user: "));
     QLabel *cred_name_pass = new QLabel(QApplication::translate("cred_name_pass", " pass: "));
-   
+    
+    QFont *data_font = new QFont("Ariel", 12);
+    cred_title->setFont(*data_font);
+    cred_user->setFont(*data_font);
+    cred_pass->setFont(*data_font);
+    cred_title->setAlignment(Qt::AlignRight);
+    cred_user->setAlignment(Qt::AlignRight);
+    cred_pass->setAlignment(Qt::AlignRight);
+    
+
     //QLabel *cred_id = new QLabel(QApplication::translate("cred_id", " "));
-    QLabel *cred_title = new QLabel(QApplication::translate("cred_title", " "));
-    QLabel *cred_user = new QLabel(QApplication::translate("cred_user", " "));
-    QLabel *cred_pass = new QLabel(QApplication::translate("cred_pass", " "));
+ 
     
     info_box_grid->addWidget(cred_name_title, 0, 0); 
     info_box_grid->addWidget(cred_title, 0, 1); 
@@ -81,15 +112,18 @@ void successorWindow::drawWindow() {
 
     // options box Vbox
     QVBoxLayout *options_vbox = new QVBoxLayout();
-    add_button->setFixedSize(150, 25); 
-    logout_button->setFixedSize(150, 25); 
-    edit_button->setFixedSize(150, 25); 
+    add_button->setMinimumSize(150, 25); 
+    logout_button->setMinimumSize(150, 25); 
+    edit_button->setMinimumSize(150, 25);
+    remove_button->setFixedSize(150, 25);
     QSpacerItem *options_spacer = new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
     options_vbox->addItem(options_spacer); 
     options_vbox->addWidget(add_button);
     options_vbox->addWidget(edit_button);
+    options_vbox->addWidget(remove_button);
     options_vbox->addWidget(logout_button); 
     options_vbox->setAlignment(add_button, Qt::AlignHCenter);
+    options_vbox->setAlignment(remove_button, Qt::AlignHCenter);
     options_vbox->setAlignment(logout_button, Qt::AlignHCenter);
     options_vbox->setAlignment(edit_button, Qt::AlignHCenter);
 
@@ -99,12 +133,8 @@ void successorWindow::drawWindow() {
     option_box_wrapper->setLayout(options_vbox); 
 
     // right side credential list
-    QListWidget *credential_list_widget = new QListWidget();
-    std::vector<credential> credentialList = readio::createCredentialVector();
-    for(auto& i : credentialList) {
-       QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(i.getCredentialName())); 
-       item->setData(Qt::UserRole, i.getCredentialIdentifier());
-       credential_list_widget->addItem(item);
+    for(auto& i : credentialList) { 
+        credential_list_widget->addItem(QString::fromStdString(i.getCredentialName()));
     }
 
 

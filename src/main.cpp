@@ -26,7 +26,9 @@ int main(int argc, char **argv) {
     // Slots for successorWindow
     QObject::connect(login_window_qobj.getSuccessorWindowObj()->getLogoutButton(),
             &QPushButton::clicked, login_window_qobj.getSuccessorWindowObj(), &successorWindow::onLogoutClicked); 
-    
+    QObject::connect(login_window_qobj.getSuccessorWindowObj()->getListWidget(),
+            &QListWidget::itemClicked, login_window_qobj.getSuccessorWindowObj(), &successorWindow::onListItemSelected);    
+
 
     return app.exec();
 }

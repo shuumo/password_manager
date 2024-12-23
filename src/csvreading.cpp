@@ -28,7 +28,12 @@ std::vector<credential> readio::createCredentialVector() {
 }
 
 void readio::addCredToFile(credential cred) {
-    cred.setName("hello world");
+    std::string toAppend = cred.getCredentialName()
+        += ',' += cred.getCredentialUser()
+        += ',' += cred.getCredentialPass();
+
+    std::ofstream fileWriter("vault_data", std::ios::app);
+    fileWriter << toAppend;
     return;
 }
 
@@ -38,6 +43,7 @@ void readio::removeCredFromFile(credential cred) {
 }
 
 void readio::editCredInFile(credential cred) {
+    // remove credential.. then append new credential
     cred.setName("hello world");
     return;
 }

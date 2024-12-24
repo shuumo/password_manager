@@ -72,11 +72,12 @@ void loginWindow::drawWindow() {
     //master key entry 
     QLabel *label = new QLabel(QApplication::translate("master_entry", "Master Key: "));
     line_edit->setEchoMode(QLineEdit::Password);
-   
+
     //login and exit buttons
     login_button->setFixedSize(100, 50);
+    login_button->setDefault(true);
     exit_button->setFixedSize(100, 25);
-     
+
     //layout box for master key entry and its corresponding label 
     QHBoxLayout *key_entry_layout = new QHBoxLayout();
     key_entry_layout->addSpacing(100);
@@ -110,7 +111,10 @@ void loginWindow::drawWindow() {
     vertical_layout->addLayout(button_outer_layout);
     vertical_layout->addSpacing(150);
 
-    window->setLayout(vertical_layout); 
+    window->setLayout(vertical_layout);
+
+    window->setFocusProxy(line_edit); 
+    window->setTabOrder(line_edit, login_button);
 }
 
 

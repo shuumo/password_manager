@@ -48,9 +48,8 @@ void successorWindow::onLogoutClicked() {
     QCoreApplication::quit();
 }
 
-void successorWindow::onAddClicked() {
+void successorWindow::onAddClicked() { 
     QDialog addCredPopUp(main_window);
-    
     QLabel name_label(QApplication::translate("name_label_add", "Enter Credential Name"));
     QLineEdit name_entry;
     QLabel user_label(QApplication::translate("user_label_add", "Enter Credential Username"));
@@ -58,7 +57,6 @@ void successorWindow::onAddClicked() {
     QLabel pass_label(QApplication::translate("pass_label_add", "Enter Credential Password"));
     QLineEdit pass_entry;
     pass_entry.setEchoMode(QLineEdit::Password);
-    
     QVBoxLayout internal_add_vbox; 
     internal_add_vbox.addWidget(&name_label); 
     internal_add_vbox.addWidget(&name_entry); 
@@ -66,18 +64,33 @@ void successorWindow::onAddClicked() {
     internal_add_vbox.addWidget(&user_entry); 
     internal_add_vbox.addWidget(&pass_label); 
     internal_add_vbox.addWidget(&pass_entry); 
-
-    QPushButton confirm_add_button(QApplication::translate("confirm_add_button", "Add")); 
-    QPushButton cancel_add_button(QApplication::translate("cancel_add_button", "Cancel")); 
-    
+    QPushButton confirm_add_button(QApplication::translate("confirm_add_button", "Confirm")); 
+    QPushButton cancel_add_button(QApplication::translate("cancel_add_button", "Cancel"));  
     QHBoxLayout internal_add_hbox;
     internal_add_hbox.addWidget(&confirm_add_button);
-    internal_add_hbox.addWidget(&cancel_add_button);
-    
+    internal_add_hbox.addWidget(&cancel_add_button); 
     internal_add_vbox.addLayout(&internal_add_hbox);
+    addCredPopUp.setLayout(&internal_add_vbox); 
+    
+    // confirm button
+    QObject::connect(&confirm_add_button, &QPushButton::clicked, &addCredPopUp, 
+           [&]() { 
+           std::string title_entered = name_entry.text().toStdString();
+           std::string user_entered = user_entry.text().toStdString();
+           std::string pass_entered = pass_entry.text().toStdString();
+           credential new_credential(0, title_entered, user_entered, pass_entered);
+           readio::addCredToFile(new_credential);
+           successorWindow::buildList();
+           addCredPopUp.close();
+           });
 
-    addCredPopUp.setLayout(&internal_add_vbox);
+    // cancel button
+    QObject::connect(&cancel_add_button, &QPushButton::clicked, &addCredPopUp, 
+           [&addCredPopUp]() { addCredPopUp.close(); });    
+     
+
     addCredPopUp.exec();
+
 }
 
 void successorWindow::onEditClicked() { 
@@ -92,15 +105,16 @@ void successorWindow::onEditClicked() {
     }
     
     QDialog editCredPopUp(main_window);
-    
     QLabel name_label(QApplication::translate("name_label_edit", "Enter New Credential Name"));
     QLineEdit name_entry;
+    name_entry.setText(QString::fromStdString(credentialList[targetIdx].getCredentialName()));
     QLabel user_label(QApplication::translate("user_label_edit", "Enter New Credential Username"));
     QLineEdit user_entry;
+    user_entry.setText(QString::fromStdString(credentialList[targetIdx].getCredentialUser()));
     QLabel pass_label(QApplication::translate("pass_label_edit", "Enter New Credential Password"));
     QLineEdit pass_entry;
+    pass_entry.setText(QString::fromStdString(credentialList[targetIdx].getCredentialPass()));
     pass_entry.setEchoMode(QLineEdit::Password);
-    
     QVBoxLayout internal_edit_vbox; 
     internal_edit_vbox.addWidget(&name_label); 
     internal_edit_vbox.addWidget(&name_entry); 
@@ -108,17 +122,33 @@ void successorWindow::onEditClicked() {
     internal_edit_vbox.addWidget(&user_entry); 
     internal_edit_vbox.addWidget(&pass_label); 
     internal_edit_vbox.addWidget(&pass_entry); 
-
     QPushButton confirm_edit_button(QApplication::translate("confirm_edit_button", "Confirm")); 
-    QPushButton cancel_edit_button(QApplication::translate("cancel_edit_button", "Cancel")); 
-    
+    QPushButton cancel_edit_button(QApplication::translate("cancel_edit_button", "Cancel"));  
     QHBoxLayout internal_edit_hbox;
     internal_edit_hbox.addWidget(&confirm_edit_button);
-    internal_edit_hbox.addWidget(&cancel_edit_button);
-    
+    internal_edit_hbox.addWidget(&cancel_edit_button); 
     internal_edit_vbox.addLayout(&internal_edit_hbox);
+    editCredPopUp.setLayout(&internal_edit_vbox); 
+    
+    // confirm button
+    QObject::connect(&confirm_edit_button, &QPushButton::clicked, &editCredPopUp, 
+           [&]() { 
+           std::string title_entered = name_entry.text().toStdString();
+           std::string user_entered = user_entry.text().toStdString();
+           std::string pass_entered = pass_entry.text().toStdString();
+           credentialList[targetIdx].setName(title_entered);
+           credentialList[targetIdx].setUser(user_entered);
+           credentialList[targetIdx].setPass(pass_entered);
+           readio::rebuildDataVault(credentialList);
+           successorWindow::buildList();
+           editCredPopUp.close();
+           });
 
-    editCredPopUp.setLayout(&internal_edit_vbox);
+    // cancel button
+    QObject::connect(&cancel_edit_button, &QPushButton::clicked, &editCredPopUp, 
+           [&editCredPopUp]() { editCredPopUp.close(); });    
+     
+
     editCredPopUp.exec();
 }
 

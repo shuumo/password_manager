@@ -3,25 +3,42 @@
 
 #include "encrypt.hpp"
 
-//TODO
 std::string encryptor::encryptString(std::string str, std::string key) {
-    std::cout << "encrypt called" << '\n'; 
-
+    unsigned char nonce[crypto_aead_aes256gcm_NPUBBYTES];
+    unsigned char ciphertext[str.size() + crypto_aead_aes256gcm_ABYTES];
+    unsigned long long ciphertext_len;
     
-    return str;
+    randombytes_buf(nonce, sizeof nonce);
+
+    crypto_aead_aes256gcm_encrypt(ciphertext, &ciphertext_len, 
+            reinterpret_cast<const unsigned char*>(str.data()), str.size(), 
+            NULL, 0,
+            NULL, nonce, reinterpret_cast<const unsigned char*>(key.data()));
+    std::string encrypted_str(reinterpret_cast<char*>(ciphertext), sizeof ciphertext);
+    std::string nonce_string(reinterpret_cast<char*>(nonce), sizeof nonce);
+    return nonce_string + encrypted_str;
 }
 
-//TODO
-std::string encryptor::decryptString(std::string str, std::string key, std::string nonce) {
-    std::cout << "decrypt called" << '\n'; 
+std::string encryptor::decryptString(std::string str, std::string key) {
+    std::string nonce = str.substr(0, 12);
+    std::string ciphertext = str.substr(12);
+
+    unsigned char decrypted[ciphertext.size()-crypto_aead_aes256gcm_ABYTES];
+    unsigned long long decrypted_len;
     
+    if(ciphertext.size() < crypto_aead_aes256gcm_ABYTES ||
+            crypto_aead_aes256gcm_decrypt(decrypted, &decrypted_len,
+                NULL,
+                reinterpret_cast<const unsigned char*>(ciphertext.data()), ciphertext.size(),
+                NULL, 0,
+                reinterpret_cast<const unsigned char*>(nonce.data()), 
+                reinterpret_cast<const unsigned char*>(key.data())) != 0) {
 
-    return str;
+    }
+    std::string decrypted_str(reinterpret_cast<char*>(decrypted), sizeof decrypted); 
+    return decrypted_str;
 }
 
-std::string encryptor::generateNonce() {
-
-}
 
 std::string encryptor::generateHashSalt() {
     unsigned char salt[crypto_pwhash_SALTBYTES];

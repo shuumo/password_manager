@@ -76,6 +76,7 @@ void successorWindow::onAddClicked() {
     QObject::connect(&confirm_add_button, &QPushButton::clicked, &addCredPopUp, 
            [&]() { 
            std::string title_entered = name_entry.text().toStdString();
+           if(title_entered.size() < 1) { addCredPopUp.close(); return;} 
            std::string user_entered = user_entry.text().toStdString();
            std::string pass_entered = pass_entry.text().toStdString();
            credential new_credential(0, title_entered, user_entered, pass_entered);
@@ -134,6 +135,7 @@ void successorWindow::onEditClicked() {
     QObject::connect(&confirm_edit_button, &QPushButton::clicked, &editCredPopUp, 
            [&]() { 
            std::string title_entered = name_entry.text().toStdString();
+           if(title_entered.size() < 1) { editCredPopUp.close(); return; }
            std::string user_entered = user_entry.text().toStdString();
            std::string pass_entered = pass_entry.text().toStdString();
            credentialList[targetIdx].setName(title_entered);

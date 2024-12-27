@@ -2,6 +2,7 @@
 #include <string>
 
 #include "csvreading.hpp"
+#include "cryptography.hpp"
 
 void readio::createCredentialVector(std::vector<credential> *listVector) { 
     std::ifstream fileReader("vault_data"); 

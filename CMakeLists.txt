@@ -20,6 +20,8 @@ endif()
 find_package(Qt${QT_MAJOR_VERSION} COMPONENTS Widgets REQUIRED PATHS $ENV{Qt${QT_MAJOR_VERSION}_HOME})
 
 add_executable(${TARGET_NAME}
+    include/cryptography.hpp
+    src/cryptography.cpp
     include/credential.hpp
     src/credential.cpp
     include/csvreading.hpp
@@ -43,3 +45,4 @@ set_target_properties(${TARGET_NAME} PROPERTIES DEBUG_OUTPUT_NAME "${TARGET_NAME
 
 #append extra links here:
 target_link_libraries(${TARGET_NAME} PRIVATE Qt${QT_MAJOR_VERSION}::Widgets)
+target_link_libraries(${TARGET_NAME} PRIVATE sodium)

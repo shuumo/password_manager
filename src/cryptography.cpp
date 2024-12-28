@@ -9,12 +9,11 @@ std::string encryptor::encryptString(std::string str, std::string key) {
     unsigned long long ciphertext_len;
     
     randombytes_buf(nonce, sizeof nonce);
-
     crypto_aead_aes256gcm_encrypt(ciphertext, &ciphertext_len, 
             reinterpret_cast<const unsigned char*>(str.data()), str.size(), 
             NULL, 0,
             NULL, nonce, reinterpret_cast<const unsigned char*>(key.data()));
-    std::string encrypted_str(reinterpret_cast<char*>(ciphertext), sizeof ciphertext);
+    std::string encrypted_str(reinterpret_cast<char*>(ciphertext), ciphertext_len);
     std::string nonce_string(reinterpret_cast<char*>(nonce), sizeof nonce);
     delete[] ciphertext;
     return nonce_string + encrypted_str;
@@ -23,7 +22,6 @@ std::string encryptor::encryptString(std::string str, std::string key) {
 std::string encryptor::decryptString(std::string str, std::string key) {
     std::string nonce = str.substr(0, 12);
     std::string ciphertext = str.substr(12);
-
     unsigned char *decrypted = new unsigned char[ciphertext.size()];
     unsigned long long decrypted_len;
     
@@ -34,10 +32,9 @@ std::string encryptor::decryptString(std::string str, std::string key) {
                 NULL, 0,
                 reinterpret_cast<const unsigned char*>(nonce.data()), 
                 reinterpret_cast<const unsigned char*>(key.data())) != 0) {
-
     }
-    std::string decrypted_str(reinterpret_cast<char*>(decrypted), decrypted_len);
-    delete[] decrypted;
+    std::string decrypted_str(reinterpret_cast<char*>(decrypted), decrypted_len); 
+    delete[] decrypted; 
     return decrypted_str;
 }
 
@@ -48,21 +45,22 @@ std::string encryptor::encodeString(std::string str) {
             reinterpret_cast<unsigned char*>(str.data()), str.size(),
             sodium_base64_VARIANT_URLSAFE);
 
-    std::string b64_encoded(b64, sizeof b64);
+    std::string b64_encoded(b64, b64_maxlen);
     delete[] b64;
     return b64_encoded;
 }
 
 std::string encryptor::decodeString(std::string str) {
-   unsigned int bin_maxlen = str.size() / 4 * 3 + 1;
-   unsigned char *bin = new unsigned char[bin_maxlen];
-   size_t bin_len;
-   sodium_base642bin(bin, bin_maxlen,
-           str.data(), str.size(),
-           NULL, &bin_len, NULL, sodium_base64_VARIANT_URLSAFE);
-   std::string b64_decoded(reinterpret_cast<char*>(bin), bin_len);
-   delete[] bin;
-   return b64_decoded;
+    unsigned int bin_maxlen = str.size() / 4 * 3 + 1; 
+    unsigned char *bin = new unsigned char[bin_maxlen];
+    size_t bin_len;
+    const char ignore[2] = "\n";
+    sodium_base642bin(bin, bin_maxlen,
+            str.data(), str.size(),
+            ignore, &bin_len, NULL, sodium_base64_VARIANT_URLSAFE);
+    std::string b64_decoded(reinterpret_cast<char*>(bin), bin_len);
+    delete[] bin;
+    return b64_decoded;
 }
 
 std::string encryptor::generateHashSalt() {

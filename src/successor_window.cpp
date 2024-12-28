@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "successor_window.hpp"
+#include "cryptography.hpp"
 #include "credential.hpp"
 #include "csvreading.hpp"
 
@@ -18,30 +19,22 @@
  * Main screen (home menu, post login)
 */
 
-QWidget *main_window;
-QPushButton *add_button;
-QPushButton *logout_button;
-QPushButton *edit_button;
-QPushButton *remove_button;
-QListWidget *credential_list_widget;
-QLabel *cred_title;
-QLabel *cred_user;
-QLabel *cred_pass;
-std::vector<credential> credentialList;
 
 successorWindow::successorWindow(QWidget *parent) : main_window(parent) {
     add_button = new QPushButton(QApplication::translate("add_credential", "Add Credential")); 
     edit_button = new QPushButton(QApplication::translate("edit_credential", "Edit Credential"));  
     remove_button = new QPushButton(QApplication::translate("remove_credential", "Destroy Credential"));
     logout_button = new QPushButton(QApplication::translate("exit_program", "Log Out"));
-     
-    credential_list_widget = new QListWidget();
+    
+    credential_list_widget = new QListWidget(); 
     
     cred_title = new QLabel(QApplication::translate("cred_title", " "));
     cred_user = new QLabel(QApplication::translate("cred_user", " "));
     cred_pass = new QLabel(QApplication::translate("cred_pass", " "));
 
     readio::createCredentialVector(&credentialList);
+    
+    decryptkey = "";
 }
 
 void successorWindow::onLogoutClicked() {
@@ -74,12 +67,13 @@ void successorWindow::onAddClicked() {
     
     // confirm button
     QObject::connect(&confirm_add_button, &QPushButton::clicked, &addCredPopUp, 
-           [&]() { 
-           std::string title_entered = name_entry.text().toStdString();
-           if(title_entered.size() < 1) { addCredPopUp.close(); return;} 
-           std::string user_entered = user_entry.text().toStdString();
-           std::string pass_entered = pass_entry.text().toStdString();
-           credential new_credential(0, title_entered, user_entered, pass_entered);
+           [&]() {
+           if(name_entry.text().toStdString().size() < 1) { addCredPopUp.close(); return;} 
+           std::string title_entered = encryptor::encryptString(name_entry.text().toStdString(), decryptkey);
+           std::string user_entered = encryptor::encryptString(user_entry.text().toStdString(), decryptkey);
+           std::string pass_entered = encryptor::encryptString(pass_entry.text().toStdString(), decryptkey);
+           credential new_credential(0, encryptor::encodeString(title_entered), encryptor::encodeString(user_entered), 
+                   encryptor::encodeString(pass_entered));
            readio::addCredToFile(new_credential);
            successorWindow::buildList();
            addCredPopUp.close();
@@ -176,9 +170,15 @@ void successorWindow::onRemoveClicked() {
 
 void successorWindow::onListItemSelected() {
     int selectedIdx = credential_list_widget->currentRow();
-    cred_title->setText(QString::fromStdString(credentialList[selectedIdx].getCredentialName()));
-    cred_user->setText(QString::fromStdString(credentialList[selectedIdx].getCredentialUser()));
-    cred_pass->setText(QString::fromStdString(credentialList[selectedIdx].getCredentialPass()));
+    std::string name_decoded = encryptor::decryptString(encryptor::decodeString(
+                credentialList[selectedIdx].getCredentialName()), decryptkey); 
+    std::string user_decoded = encryptor::decryptString(encryptor::decodeString(
+                credentialList[selectedIdx].getCredentialUser()), decryptkey);  
+    std::string pass_decoded = encryptor::decryptString(encryptor::decodeString(
+                credentialList[selectedIdx].getCredentialPass()), decryptkey); 
+    cred_title->setText(QString::fromStdString(name_decoded));
+    cred_user->setText(QString::fromStdString(user_decoded));
+    cred_pass->setText(QString::fromStdString(pass_decoded));
 }
 
 QListWidget* successorWindow::getListWidget() {
@@ -201,11 +201,14 @@ QPushButton* successorWindow::getRemoveButton() {
     return remove_button;
 }
 
-void successorWindow::drawWindow() {
+void successorWindow::drawWindow(std::string passkey) {
     main_window->resize(600, 500);
     main_window->setMinimumSize(600, 500); 
     main_window->setWindowTitle(QApplication::translate("vault", "Password Vault")); 
     
+    decryptkey += passkey;
+    passkey.erase();
+
     // top title text 
     QLabel *top_title = new QLabel(QApplication::translate("title_text", "Password Vault")); 
     QFont *title_font = new QFont("Ariel", 20); 
@@ -237,9 +240,7 @@ void successorWindow::drawWindow() {
     cred_user->setAlignment(Qt::AlignRight);
     cred_pass->setAlignment(Qt::AlignRight);
     
-
     //QLabel *cred_id = new QLabel(QApplication::translate("cred_id", " "));
- 
     
     info_box_grid->addWidget(cred_name_title, 0, 0); 
     info_box_grid->addWidget(cred_title, 0, 1); 
@@ -271,7 +272,6 @@ void successorWindow::drawWindow() {
     options_vbox->setAlignment(logout_button, Qt::AlignHCenter);
     options_vbox->setAlignment(edit_button, Qt::AlignHCenter);
 
-
     // wrapper for options Vbox
     QWidget *option_box_wrapper = new QWidget(); 
     option_box_wrapper->setLayout(options_vbox); 
@@ -295,7 +295,9 @@ void successorWindow::drawWindow() {
 void successorWindow::buildList() { 
     readio::createCredentialVector(&credentialList);
     credential_list_widget->clear();
-    for(auto& i : credentialList) { 
-        credential_list_widget->addItem(QString::fromStdString(i.getCredentialName()));
+    for(auto& i : credentialList) {
+        std::string credential_name_decrypted = encryptor::decryptString(encryptor::decodeString(
+                    i.getCredentialName()), decryptkey);
+        credential_list_widget->addItem(QString::fromStdString(credential_name_decrypted));
     }
 }

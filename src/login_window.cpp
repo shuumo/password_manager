@@ -4,9 +4,14 @@
 #include <QFont>
 #include <QApplication>
 #include <QString>
+#include <QInputDialog>
+#include <QTime>
 
 #include "login_window.hpp"
+#include "csvreading.hpp"
+#include "cryptography.hpp"
 
+#include <iostream>
 /*
  * Login Screen
  *
@@ -35,13 +40,20 @@ void loginWindow::onExitClicked() {
 }
 
 void loginWindow::onLoginClicked() {
-    QString correct_entry = QString::fromStdString("passkey");
-    QString input_entry = line_edit->text();
-    if(correct_entry == input_entry) {   
-        successorWindowObj->drawWindow();
+    login_button->setText(QApplication::translate("exit_button", "Hashing..."));
+    QTime dieTime= QTime::currentTime().addSecs(1);
+    while (QTime::currentTime() < dieTime)
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+    
+    std::string correct_entry = readio::getStorageHash();
+    std::string input_entry = line_edit->text().toStdString();
+    if(encryptor::verifyMasterHash(input_entry, correct_entry)) {
+        std::string salt = readio::getStorageSalt();
+        successorWindowObj->drawWindow(encryptor::masterToKey(input_entry, salt));
         successor_window->show(); 
         window->close();
-    } 
+    }
+    login_button->setText(QApplication::translate("login_button", "Log In"));
 }
 
 successorWindow* loginWindow::getSuccessorWindowObj() {
@@ -115,6 +127,21 @@ void loginWindow::drawWindow() {
 
     window->setFocusProxy(line_edit); 
     window->setTabOrder(line_edit, login_button);
+    
+    if(readio::keyHashExists() == 0) {
+        bool passkey_selection;
+        QString passkey = QInputDialog::getText(window, tr("Vault Setup"), tr("Setup a Passkey to enter your vault: "), 
+                QLineEdit::PasswordEchoOnEdit, "", &passkey_selection);
+        std::string stdpasskey = passkey.toStdString();
+        if(passkey_selection == false || stdpasskey.size() > 128) {
+            QCoreApplication::quit();
+            std::exit(0);
+        }
+        std::string key_salt = encryptor::generateHashSalt();
+        readio::newStorageHash(stdpasskey, key_salt);
+
+    }
+
 }
 
 

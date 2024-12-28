@@ -26,10 +26,12 @@ private:
     QLabel *cred_pass;
 
     std::vector<credential> credentialList;
+    
+    std::string decryptkey; 
 
 public:
     successorWindow(QWidget *parent);
-    void drawWindow();
+    void drawWindow(std::string passkey);
     void buildList();
     
     QListWidget* getListWidget();

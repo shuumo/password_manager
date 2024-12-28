@@ -12,6 +12,10 @@ public:
     static void removeCredFromFile(credential cred, std::vector<credential> rebuildTemplate);
     static void editCredInFile(credential cred, std::vector<credential> rebuildTemplate);
     static void rebuildDataVault(std::vector<credential> rebuildTemplate);
+    static int keyHashExists();
+    static void newStorageHash(std::string storage_hash, std::string storage_salt);
+    static std::string getStorageHash();
+    static std::string getStorageSalt();
 };
 
 #endif

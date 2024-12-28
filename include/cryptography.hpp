@@ -12,7 +12,7 @@ public:
     static std::string masterToKey(std::string master, std::string salt);
     static std::string generateHashSalt();
     static std::string storageMasterHash(std::string master);
-    static int verifyMasterHash(std::string master, std::string sotrage_hash);
+    static int verifyMasterHash(std::string master, std::string storage_hash);
     static void errOccured();
 };
 

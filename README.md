@@ -20,9 +20,9 @@ To compile, simply run `cmake CMakeLists.txt` and then `make`.
 10. Lock the credentials behind one password using a HASH algorithm
 
 
-## Concepts to use
+## Some Info
 #### Drawing the GUI
-QT is "a cross-platform framework that is usually used as a graphical toolkit". We can use it in C++ to draw a graphical user interface for our program. 
+QT is "a cross-platform framework that is usually used as a graphical toolkit". Its what Im using in this.
 
 #### Credential Unlocking
 Can use a one-way hash to check if the login credential is correct. If the given passwords hash matches the hash stored, unlock the application. Can salt and pepper the hash as well.
@@ -32,12 +32,12 @@ We can use basic symmetric cryptography, or more advanced asymmetric cryptograph
 
 #### General Structure
 - `main.cpp` is the entry point of the program. It will create the initial objects required for QT6 to draw windows.
-- `login_window.cpp` will be an object that is responsible for the login screen and its related sockets.
-- `successor_window.cpp` will be an object that is responsible for the main post-login home screen and its related sockets. 
-- `csvreading.cpp` will be responsible for file io.
-- `hashing.cpp` will be responsible for hash related functions and checking in regards to the master key.
-- `encryption.cpp` will be responsible for the encryption and decryption of credential data.
-- `credential.cpp` will be objects that contain the credentials data in their encrypted form.
+- `login_window.cpp` is an object that is responsible for the login screen. (needs refactoring)
+- `successor_window.cpp` is an object that is responsible for the main post-login home screen. (needs refactoring)
+- `csvreading.cpp` is responsible for file io.
+- `hashing.cpp` is responsible for hash related functions and checking in regards to the master key.
+- `encryption.cpp` is responsible for the encryption and decryption of credential data.
+- `credential.cpp` is objects that contain the credentials data in their encrypted form.
 
 ## UI GOALS
 
@@ -50,11 +50,10 @@ Display a list of saved credentials.
 #### Add/Edit/Delete Credentials:
 Provide forms or buttons for creating, modifying, or removing entries.
 
-#### Search for Credentials:
+#### TODO: Search for Credentials:    
 Allow users to search for specific credentials.
 
 #### Log Out or Exit:
 Provide an option to lock or exit the application securely.
 
-
-warning: probably not up to the highest of industry standard for cyber security, use 1password or somthing instead ;)
+use 1password or somthing instead ;)

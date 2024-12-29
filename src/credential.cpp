@@ -1,10 +1,5 @@
 #include <credential.hpp>
 
-int id;
-std::string name;
-std::string pass;
-std::string user;
-
 credential::credential(int i, std::string n, std::string u, std::string p) : id(i), name(n), user(u), pass(p)  {
     // constructor;
 }

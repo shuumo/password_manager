@@ -18,15 +18,6 @@
 */
 
 
-QWidget *window;
-QWidget *successor_window;
-
-QPushButton *exit_button;
-QPushButton *login_button;
-QLineEdit *line_edit;
-
-successorWindow *successorWindowObj;
-
 loginWindow::loginWindow(QWidget *parent, QWidget *successor) : window(parent), successor_window(successor) {  
     exit_button = new QPushButton(QApplication::translate("exit_button", "Exit"), window);  
     login_button = new QPushButton(QApplication::translate("login_button", "Log In"), window);

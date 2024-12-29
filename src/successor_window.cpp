@@ -20,6 +20,7 @@
 */
 
 
+
 successorWindow::successorWindow(QWidget *parent) : main_window(parent) {
     add_button = new QPushButton(QApplication::translate("add_credential", "Add Credential")); 
     edit_button = new QPushButton(QApplication::translate("edit_credential", "Edit Credential"));  
@@ -102,13 +103,19 @@ void successorWindow::onEditClicked() {
     QDialog editCredPopUp(main_window);
     QLabel name_label(QApplication::translate("name_label_edit", "Enter New Credential Name"));
     QLineEdit name_entry;
-    name_entry.setText(QString::fromStdString(credentialList[targetIdx].getCredentialName()));
+    std::string name_entry_decrypted = encryptor::decryptString(encryptor::decodeString(
+                credentialList[targetIdx].getCredentialName()), decryptkey);
+    name_entry.setText(QString::fromStdString(name_entry_decrypted));
     QLabel user_label(QApplication::translate("user_label_edit", "Enter New Credential Username"));
     QLineEdit user_entry;
-    user_entry.setText(QString::fromStdString(credentialList[targetIdx].getCredentialUser()));
+    std::string user_entry_decrypted = encryptor::decryptString(encryptor::decodeString(
+                credentialList[targetIdx].getCredentialUser()), decryptkey);
+    user_entry.setText(QString::fromStdString(user_entry_decrypted));
     QLabel pass_label(QApplication::translate("pass_label_edit", "Enter New Credential Password"));
     QLineEdit pass_entry;
-    pass_entry.setText(QString::fromStdString(credentialList[targetIdx].getCredentialPass()));
+    std::string pass_entry_decrypted = encryptor::decryptString(encryptor::decodeString(
+                credentialList[targetIdx].getCredentialPass()), decryptkey);
+    pass_entry.setText(QString::fromStdString(pass_entry_decrypted));
     pass_entry.setEchoMode(QLineEdit::Password);
     QVBoxLayout internal_edit_vbox; 
     internal_edit_vbox.addWidget(&name_label); 
@@ -128,11 +135,14 @@ void successorWindow::onEditClicked() {
     // confirm button
     QObject::connect(&confirm_edit_button, &QPushButton::clicked, &editCredPopUp, 
            [&]() { 
-           std::string title_entered = name_entry.text().toStdString();
-           if(title_entered.size() < 1) { editCredPopUp.close(); return; }
-           std::string user_entered = user_entry.text().toStdString();
-           std::string pass_entered = pass_entry.text().toStdString();
-           credentialList[targetIdx].setName(title_entered);
+           std::string name_entered = encryptor::encodeString(encryptor::encryptString(
+                       name_entry.text().toStdString(), decryptkey));
+           if(name_entered.size() < 1) { editCredPopUp.close(); return; }
+           std::string user_entered = encryptor::encodeString(encryptor::encryptString(
+                       user_entry.text().toStdString(), decryptkey));
+           std::string pass_entered = encryptor::encodeString(encryptor::encryptString(
+                       pass_entry.text().toStdString(), decryptkey));
+           credentialList[targetIdx].setName(name_entered);
            credentialList[targetIdx].setUser(user_entered);
            credentialList[targetIdx].setPass(pass_entered);
            readio::rebuildDataVault(credentialList);
@@ -295,9 +305,14 @@ void successorWindow::drawWindow(std::string passkey) {
 void successorWindow::buildList() { 
     readio::createCredentialVector(&credentialList);
     credential_list_widget->clear();
+    cred_title->setText(" ");
+    cred_user->setText(" ");
+    cred_pass->setText(" ");
     for(auto& i : credentialList) {
         std::string credential_name_decrypted = encryptor::decryptString(encryptor::decodeString(
                     i.getCredentialName()), decryptkey);
         credential_list_widget->addItem(QString::fromStdString(credential_name_decrypted));
+        QFont list_font("Ariel", 16);
+        credential_list_widget->setFont(list_font);
     }
 }

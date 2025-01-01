@@ -12,6 +12,7 @@ To compile, simply run `cmake CMakeLists.txt` and then `make`.
 - Change: Optimize usage of strings by using string_view.
 - Change: Pass things by address (&) instead of copies and raw pointers.
 - Change: Use smart pointers.
+- Change: Replace credential class with a credential struct.
 - Change: Currently missing some delete keywords for Qt widgets (I think?)
 - Implement: Make the main-screen UI/UX nicer. Currently abit dry.
 

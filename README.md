@@ -7,6 +7,13 @@
 
 To compile, simply run `cmake CMakeLists.txt` and then `make`. 
 
+## TO DO
+- Implemen: Credential Search Feature.
+- Change: Optimize usage of strings by using string_view.
+- Change: Pass things by address (&) instead of copies and raw pointers.
+- Change: Use smart pointers.
+- Change: Currently missing some delete keywords for Qt widgets (I think?)
+- Implement: Make the main-screen UI/UX nicer. Currently abit dry.
 
 ## MVP Requirements
 1. Has a graphical user interface

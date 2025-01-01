@@ -9,7 +9,7 @@ To compile, simply run `cmake CMakeLists.txt` and then `make`.
 
 ## TO DO
 - Implemen: Credential Search Feature.
-- Change: Optimize usage of strings by using string_view. Particularly in cryptography.cpp.
+- Change: Optimize usage of strings by using string_view. Particularly in `cryptography.cpp`.
 - Change: Pass things by address (&) instead of copies and raw pointers.
 - Change: Use smart pointers.
 - Change: Replace credential class with a credential struct.

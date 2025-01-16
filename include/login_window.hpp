@@ -1,5 +1,5 @@
 #ifndef LOGIN_WINDOW
-#define LOGIN_WINOW
+#define LOGIN_WINDOW
 
 #include <QPushButton>
 #include <QLineEdit>

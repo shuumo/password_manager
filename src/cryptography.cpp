@@ -23,7 +23,7 @@ std::string encryptor::decryptString(std::string str, std::string key) {
     std::string nonce = str.substr(0, 12);
     std::string ciphertext = str.substr(12);
     unsigned char *decrypted = new unsigned char[ciphertext.size()];
-    unsigned long long decrypted_len;
+    unsigned long long decrypted_len{};
     
     if(ciphertext.size() < crypto_aead_aes256gcm_ABYTES ||
             crypto_aead_aes256gcm_decrypt(decrypted, &decrypted_len,

@@ -16,7 +16,7 @@ To compile, simply run `cmake CMakeLists.txt` and then `make`.
 - Change: Currently missing some delete keywords for Qt widgets (I think?)
 - Implement: Make the main-screen UI/UX nicer. Currently abit dry.
 
-## MVP Requirements
+## MVP Requirements (mvp done yay)
 1. Has a graphical user interface
 3. Add credentials  to database
 4. Encrypt the credentials using symmetric encryption
